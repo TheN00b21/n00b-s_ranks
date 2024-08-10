@@ -1,0 +1,103 @@
+body{
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color:white;
+
+    /* Background Animation*/
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    /* Dark mode colors and gradient */
+    background: #00000e; /* Fallback for browsers that don't support gradients */
+    background: linear-gradient(
+      135deg,
+      #00000e 25%,
+      	#000000 25%,
+      	#000000 50%,
+      #00000e 50%,
+      #00000e 75%,
+      	#000000 75%,
+      	#000000
+    );
+    background-size: 80px 80px;
+  
+    /* Animation */
+    animation: move 4s linear infinite;
+  }
+  
+  @keyframes move {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 40px 40px;
+    }
+}
+
+.navbar {
+    border-radius: 0 0 8px 8px;
+    background-color: #001478;
+}
+.btn-outline-danger:hover, .btn-outline-danger:active  {
+    background-color: #a80000;
+    border-color:  #a80000;
+    color:#001478;
+
+}
+.btn-outline-danger{
+    border-color: #a80000;
+    color: #a80000;
+    font-weight: bold;
+} 
+.btn-danger:hover, .btn-danger:active  {
+  background-color: #a80000;
+  border-color:  #a80000;
+  color:#001478;
+
+}
+.card {
+    height: 450px;
+    text-align: center;
+}
+.card-img-top{
+  height: 230px;
+  object-fit: contain;
+}
+.card-title{
+  font-weight: bold;
+}
+.my-btn-proof{
+  background: linear-gradient(90deg, #001478, #a80000);
+  background-size: 500%;
+  border-radius: 10px;
+  color:white;
+  font-size: 30px;
+  border: none;
+}
+.my-btn-proof:hover {
+  animation: ani 2s ease infinite;
+  border: none;
+}
+
+@keyframes ani {
+  0%{background-position:0% 0%}
+    50%{background-position:91% 100%}
+    100%{background-position:0% 0%}
+}
+.card-img-bottom {
+  height: 400px;
+  object-fit: contain;
+  position: absolute;
+  left: 0;
+  bottom: -330px;
+}
+.trust h1{
+  color:white;
+  align-items: center;
+  text-align: center;
+}
+.navbar-brand{
+  font-weight:bold;
+}
