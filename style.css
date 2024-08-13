@@ -68,6 +68,9 @@ body{
 .card-title{
   font-weight: bold;
 }
+.card-text{
+  font-size: 20px;
+}
 .my-btn-proof{
   background: linear-gradient(90deg, #001478, #a80000);
   background-size: 500%;
@@ -100,4 +103,44 @@ body{
 }
 .navbar-brand{
   font-weight:bold;
+}
+@media (min-width: 576px) { 
+  .card-img-top{
+    height: 230px;
+    object-fit: contain;
+  }
+  .card-text{
+    font-size: 16px;
+  }
+  
+}
+@media (min-width: 768px) { 
+  .card-img-top{
+  height: 230px;
+  object-fit: contain;
+}
+.card-text{
+  font-size: 20px;
+}
+
+ }
+@media (min-width: 992px) { 
+  .card-img-top{
+    height: 180px;
+    object-fit: contain;
+
+  }
+  .card-text{
+    font-size: 18px;
+  }
+ }
+ @media (min-width: 1200px) { 
+  .card-img-top{
+  height: 200px;
+  object-fit: contain;
+
+}
+.card-text{
+  font-size: 20px;
+} 
 }
