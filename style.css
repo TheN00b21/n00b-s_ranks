@@ -62,14 +62,14 @@ body{
     text-align: center;
 }
 .card-img-top{
-  height: 230px;
+  height: 190px;
   object-fit: contain;
 }
 .card-title{
   font-weight: bold;
 }
 .card-text{
-  font-size: 20px;
+  font-size: 16px;
 }
 .my-btn-proof{
   background: linear-gradient(90deg, #001478, #a80000);
