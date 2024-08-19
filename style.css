@@ -104,6 +104,10 @@ body{
 .navbar-brand{
   font-weight:bold;
 }
+.myboxabout{
+  min-height: 800px;
+  background-color: (22,22,22,0.8);
+}
 @media (min-width: 576px) { 
   .card-img-top{
     height: 230px;
