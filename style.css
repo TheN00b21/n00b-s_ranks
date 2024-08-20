@@ -90,11 +90,9 @@ body{
     100%{background-position:0% 0%}
 }
 .card-img-bottom {
-  height: 400px;
-  object-fit: contain;
   position: absolute;
   left: 0;
-  bottom: -330px;
+  bottom: 15px;
 }
 .trust h1{
   color:white;
@@ -106,8 +104,18 @@ body{
 }
 .myboxabout{
   min-height: 800px;
-  background-color: (22,22,22,0.8);
+  background-color: rgba(22,22,22,0.8);
+  border-radius: 50px;
 }
+.myboxabout h1, h4{
+  text-align: center;
+}
+span.aboutMeTitle{
+  font-weight: bold;
+  font-size: x-large;
+}
+
+
 @media (min-width: 576px) { 
   .card-img-top{
     height: 230px;
