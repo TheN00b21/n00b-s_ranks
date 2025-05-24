@@ -1,5 +1,5 @@
 body{
-    font-family: "Comic Sans MS", "Comic Sans", sans-serif;
+    font-family: "Comic Sans MS", "Comic Sans",  sans-serif;
     color:white;
 
     /* Background Animation*/
@@ -83,7 +83,25 @@ body{
   animation: ani 2s ease infinite;
   border: none;
 }
-
+.minecraft-sub{
+  
+ text-align: center;
+ padding-bottom: 30px;
+ font-size: 12px;
+ transform: rotate(4deg);
+ animation: grow 3s ease-in-out infinite;
+}
+@keyframes grow {
+  0% {
+    font-size: 17px;
+  }
+  50% {
+    font-size: 20px;
+  }
+  100% {
+    font-size: 17px;
+  }
+}
 @keyframes ani {
   0%{background-position:0% 0%}
     50%{background-position:91% 100%}
