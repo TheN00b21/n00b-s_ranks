@@ -223,7 +223,7 @@
       </div>
       <div class="col-12 col-lg-6 mb-5 mb-lg-0">
         <div class="card mx-5">
-          <img src="images/Diamond_SF6.png" class="card-img-top">
+          <img src="images/Master_SF6.png" class="card-img-top">
           <div class="card-body">
             <h1 class="card-title">Street Fighter 6</h1>
             <p class="card-text">I dabble in street fighter every once in a while, nothing else.</p>
@@ -320,7 +320,7 @@
             <h1 class="card-title">Retro Rewind</h1>
             <p class="card-text">I only play this mario kart online now, very fun.</p>
             <div class="card-img-bottom">
-              <a href="https://cdn.7tv.app/emote/01H2ZN1KK0000FR29RANYXMTY0/4x.avif"
+              <a href="https://rwfc.net/player/0773-0952-1361"
                 class="btn my-btn-proof col-8">Proof</a>
             </div>
           </div>
@@ -334,6 +334,8 @@
 
 
 
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
@@ -342,52 +344,106 @@
     const searchForm = document.querySelector('.d-flex');
     const searchInput = document.querySelector('[data-search]');
     const rows = document.querySelectorAll('.row.my-5');
+    const container = document.querySelector('.container');
 
-    searchForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const searchTerm = searchInput.value.toLowerCase().trim();
-      const matchingCards = [];
+    // Create search results container
+    const searchResultsContainer = document.createElement('div');
+    searchResultsContainer.id = 'search-results-container';
+    searchResultsContainer.style.display = 'none';
+    container.appendChild(searchResultsContainer);
 
-      // Find all matching cards with relevance scores
+    // Build searchable data from cards
+    const buildCardData = () => {
+      const cardData = [];
       rows.forEach(row => {
         const cards = row.querySelectorAll('.card');
         cards.forEach(card => {
-          const title = card.querySelector('.card-title').textContent.toLowerCase();
+          const titleEl = card.querySelector('.card-title');
+          const colEl = card.closest('[class*="col-"]');
           
-          // Calculate relevance score
-          let score = 0;
-          if (title === searchTerm) {
-            score = 1000; // Exact match
-          } else if (title.startsWith(searchTerm)) {
-            score = 500; // Starts with search term
-          } else if (title.includes(searchTerm)) {
-            score = 100; // Contains search term
-          }
-          
-          if (score > 0) {
-            matchingCards.push({
-              element: card.closest('[class*="col-"]'),
-              score: score,
-              title: title
+          if (titleEl && colEl) {
+            cardData.push({
+              title: titleEl.textContent.trim(),
+              element: colEl,
+              cardHtml: colEl.innerHTML
             });
           }
         });
       });
+      return cardData;
+    };
 
-      // Sort by relevance score (descending)
-      matchingCards.sort((a, b) => b.score - a.score);
+    const cardData = buildCardData();
 
-      // Hide all rows first
+    // Initialize Fuse.js with fuzzy search options
+    const fuse = new Fuse(cardData, {
+      keys: ['title'],
+      threshold: 0.2,
+      includeScore: true
+    });
+
+    // performSearch builds and displays matching rows
+    function performSearch(rawTerm) {
+      const searchTerm = (rawTerm || '').trim();
+
+      // reset
       rows.forEach(row => row.style.display = 'none');
+      searchResultsContainer.style.display = 'none';
+      searchResultsContainer.innerHTML = '';
 
-      // Show and reorganize matching cards by relevance
-      matchingCards.forEach((item, index) => {
-        item.element.style.display = '';
-        item.element.className = 'col-12 col-lg-6 mb-5 mb-lg-0';
-        
-        // Show the parent row
-        item.element.closest('.row').style.display = '';
+      if (!searchTerm) {
+        // show originals
+        rows.forEach(row => row.style.display = '');
+        return;
+      }
+
+      const results = fuse.search(searchTerm);
+
+      if (results.length === 0) {
+        const noResultsMsg = document.createElement('p');
+        noResultsMsg.style.cssText = 'text-align: center; margin-top: 40px; font-size: 18px; color: #a80000; font-weight: bold;';
+        noResultsMsg.textContent = 'No games found';
+        searchResultsContainer.appendChild(noResultsMsg);
+        searchResultsContainer.style.display = '';
+        return;
+      }
+
+      // Build search results in rows of 2
+      let currentRow = null;
+      results.forEach((result, index) => {
+        if (index % 2 === 0) {
+          currentRow = document.createElement('div');
+          currentRow.className = 'row my-5';
+          searchResultsContainer.appendChild(currentRow);
+        }
+
+        const col = document.createElement('div');
+        col.className = 'col-12 col-lg-6 mb-5 mb-lg-0';
+        col.innerHTML = result.item.cardHtml;
+        currentRow.appendChild(col);
       });
+
+      searchResultsContainer.style.display = '';
+    }
+
+    // debounce helper
+    function debounce(fn, delay) {
+      let t;
+      return function(...args) {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
+    const debouncedInputHandler = debounce((e) => performSearch(e.target.value), 200);
+
+    // live search while typing
+    searchInput.addEventListener('input', debouncedInputHandler);
+
+    // keep submit for immediate search
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      performSearch(searchInput.value);
     });
   </script>
 
@@ -402,18 +458,17 @@
       });
       if (!card) return;
 
-      // VR element (keeps existing placement)
       const vrEl = document.createElement('p');
       vrEl.className = 'card-vr';
       vrEl.textContent = 'Loading VR...';
       const body = card.querySelector('.card-body');
       if (body) body.insertBefore(vrEl, body.querySelector('.card-text'));
 
-      // Rank placeholder element (replace card-rank-placeholder contents on success)
       const rankPlaceholder = card.querySelector('.card-rank-placeholder');
+      const rankNumberEl = rankPlaceholder ? rankPlaceholder.querySelector('.rank-number') : null;
+
       const friendCode = '0773-0952-1361';
-      // Use local proxy to avoid CORS issues. Run the included server.
-      const apiUrl = `/api/rwfc/player/${friendCode}`;
+      const apiUrl = `https://rwfc.net/api/leaderboard/player/${friendCode}`;
 
       fetch(apiUrl)
         .then(r => {
@@ -427,22 +482,13 @@
             vrEl.textContent = 'VR data not available';
           }
 
-          if (rankPlaceholder) {
-            const rankNum = (j && typeof j.rank === 'number') ? `#${j.rank.toLocaleString()}` : '#—';
-            rankPlaceholder.innerHTML = `
-              <div class="leaderboard-rank">
-                <div class="rank-number">${rankNum}</div>
-                <div class="rank-label">Overall Rank</div>
-              </div>`;
+          if (rankNumberEl && j && typeof j.rank === 'number') {
+            rankNumberEl.textContent = `#${j.rank.toLocaleString()}`;
           }
         })
         .catch(err => {
-          // Likely CORS when requested from browser; provide fallback text
-          vrEl.textContent = 'VR unavailable (use server proxy)';
-          if (rankPlaceholder) {
-            rankPlaceholder.innerHTML = '<div class="leaderboard-rank"><div class="rank-number">#—</div><div class="rank-label">Overall Rank</div></div>';
-          }
-          console.warn('Failed to fetch Retro Rewind data:', err);
+          vrEl.textContent = 'VR unavailable';
+          console.warn('Failed to fetch Retro Rewind VR:', err);
         });
     });
   </script>
