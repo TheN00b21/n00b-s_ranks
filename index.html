@@ -293,6 +293,41 @@
       </div>
       
     </div>
+
+    <div class="row my-5">
+      <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+        <div class="card mx-5">
+          <img src="https://assets-bucket.deadlock-api.com/assets-api-res/images/ranks/rank4/badge_sm_subrank4.webp" class="card-img-top">
+          <div class="card-body">
+            <h1 class="card-title">Deadlock</h1>
+            <p class="card-text">My first MOBA, very cool game</p>
+            <div class="card-img-bottom">
+              <a href="https://statlocker.gg/profile/1120217832/matches"
+                class="btn my-btn-proof col-8">Proof</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6 mb-5 mb-lg-0">
+        <div class="card mx-5">
+          <div class="card-rank-placeholder">
+            <div class="leaderboard-rank">
+              <div class="rank-number">#—</div>
+              <div class="rank-label">Overall Rank</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <h1 class="card-title">Retro Rewind</h1>
+            <p class="card-text">I only play this mario kart online now, very fun.</p>
+            <div class="card-img-bottom">
+              <a href="https://cdn.7tv.app/emote/01H2ZN1KK0000FR29RANYXMTY0/4x.avif"
+                class="btn my-btn-proof col-8">Proof</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
     
   </div>
 
@@ -302,6 +337,115 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
+
+  <script>
+    const searchForm = document.querySelector('.d-flex');
+    const searchInput = document.querySelector('[data-search]');
+    const rows = document.querySelectorAll('.row.my-5');
+
+    searchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const searchTerm = searchInput.value.toLowerCase().trim();
+      const matchingCards = [];
+
+      // Find all matching cards with relevance scores
+      rows.forEach(row => {
+        const cards = row.querySelectorAll('.card');
+        cards.forEach(card => {
+          const title = card.querySelector('.card-title').textContent.toLowerCase();
+          
+          // Calculate relevance score
+          let score = 0;
+          if (title === searchTerm) {
+            score = 1000; // Exact match
+          } else if (title.startsWith(searchTerm)) {
+            score = 500; // Starts with search term
+          } else if (title.includes(searchTerm)) {
+            score = 100; // Contains search term
+          }
+          
+          if (score > 0) {
+            matchingCards.push({
+              element: card.closest('[class*="col-"]'),
+              score: score,
+              title: title
+            });
+          }
+        });
+      });
+
+      // Sort by relevance score (descending)
+      matchingCards.sort((a, b) => b.score - a.score);
+
+      // Hide all rows first
+      rows.forEach(row => row.style.display = 'none');
+
+      // Show and reorganize matching cards by relevance
+      matchingCards.forEach((item, index) => {
+        item.element.style.display = '';
+        item.element.className = 'col-12 col-lg-6 mb-5 mb-lg-0';
+        
+        // Show the parent row
+        item.element.closest('.row').style.display = '';
+      });
+    });
+  </script>
+
+  <script>
+    // Fetch VR and overall rank for Retro Rewind and update the card
+    document.addEventListener('DOMContentLoaded', () => {
+      const targetTitle = 'Retro Rewind';
+      const allCards = Array.from(document.querySelectorAll('.card'));
+      const card = allCards.find(c => {
+        const h = c.querySelector('.card-title');
+        return h && h.textContent.trim() === targetTitle;
+      });
+      if (!card) return;
+
+      // VR element (keeps existing placement)
+      const vrEl = document.createElement('p');
+      vrEl.className = 'card-vr';
+      vrEl.textContent = 'Loading VR...';
+      const body = card.querySelector('.card-body');
+      if (body) body.insertBefore(vrEl, body.querySelector('.card-text'));
+
+      // Rank placeholder element (replace card-rank-placeholder contents on success)
+      const rankPlaceholder = card.querySelector('.card-rank-placeholder');
+      const friendCode = '0773-0952-1361';
+      // Use local proxy to avoid CORS issues. Run the included server.
+      const apiUrl = `/api/rwfc/player/${friendCode}`;
+
+      fetch(apiUrl)
+        .then(r => {
+          if (!r.ok) throw new Error('network');
+          return r.json();
+        })
+        .then(j => {
+          if (j && typeof j.vr === 'number') {
+            vrEl.textContent = `Current VR: ${j.vr.toLocaleString()}`;
+          } else {
+            vrEl.textContent = 'VR data not available';
+          }
+
+          if (rankPlaceholder) {
+            const rankNum = (j && typeof j.rank === 'number') ? `#${j.rank.toLocaleString()}` : '#—';
+            rankPlaceholder.innerHTML = `
+              <div class="leaderboard-rank">
+                <div class="rank-number">${rankNum}</div>
+                <div class="rank-label">Overall Rank</div>
+              </div>`;
+          }
+        })
+        .catch(err => {
+          // Likely CORS when requested from browser; provide fallback text
+          vrEl.textContent = 'VR unavailable (use server proxy)';
+          if (rankPlaceholder) {
+            rankPlaceholder.innerHTML = '<div class="leaderboard-rank"><div class="rank-number">#—</div><div class="rank-label">Overall Rank</div></div>';
+          }
+          console.warn('Failed to fetch Retro Rewind data:', err);
+        });
+    });
+  </script>
 </body>
 
 </html>

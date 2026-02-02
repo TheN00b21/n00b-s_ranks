@@ -60,6 +60,43 @@ body{
 .card {
     height: 450px;
     text-align: center;
+    transition: all 0.3s ease;
+}
+.card.hidden {
+    display: none !important;
+}
+/* VR display in Retro Rewind card */
+.card-vr{
+  margin: 8px 0 12px;
+  font-size: 18px;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+/* Leaderboard rank display for Retro Rewind */
+.card-rank-placeholder{
+  height: 190px; /* match previous card-img-top height */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.leaderboard-rank{
+  text-align:center;
+  background: linear-gradient(90deg,#001478,#a80000);
+  color: white;
+  padding: 18px 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+}
+.leaderboard-rank .rank-number{
+  font-size: 42px;
+  font-weight: 900;
+  line-height:1;
+}
+.leaderboard-rank .rank-label{
+  font-size: 14px;
+  opacity: 0.9;
+  margin-top:6px;
 }
 .card-img-top{
   height: 190px;

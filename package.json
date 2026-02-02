@@ -1,0 +1,13 @@
+{
+  "name": "n00b-s_ranks-server",
+  "version": "1.0.0",
+  "description": "Static site + RWFC proxy for Retro Rewind VR/rank",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.7"
+  }
+}
