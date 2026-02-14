@@ -43,6 +43,35 @@
      
     <div class="row my-5">
       <i class="minecraft-sub">Also known as the fatty hall of shame!</i>
+      <script>
+        (function() {
+          const phrases = [
+            "Also known as the fatty hall of shame!",
+            "I've never been in a relationship, could you tell?",
+            "hi :3"
+          ];
+
+          function setMinecraftSubText() {
+            const el = document.querySelector('.minecraft-sub');
+            if (!el) return;
+
+            try {
+              // pick a random phrase each visit
+              const idx = Math.floor(Math.random() * phrases.length);
+              el.textContent = phrases[idx];
+            } catch (err) {
+              // fallback
+              el.textContent = phrases[0];
+            }
+          }
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setMinecraftSubText);
+          } else {
+            setMinecraftSubText();
+          }
+        })();
+      </script>
       <div class="col-12 col-lg-6 mb-5 mb-lg-0">
         <div class="card mx-5 ">
           <img src="images/Val_Ascendant2.png" class="card-img-top mx-auto ">
@@ -298,7 +327,7 @@
     <div class="row my-5">
       <div class="col-12 col-lg-6 mb-5 mb-lg-0">
         <div class="card mx-5">
-          <img src="https://assets-bucket.deadlock-api.com/assets-api-res/images/ranks/rank4/badge_sm_subrank4.webp" class="card-img-top">
+          <img src="https://assets-bucket.deadlock-api.com/assets-api-res/images/ranks/rank6/badge_sm_subrank3.webp" class="card-img-top">
           <div class="card-body">
             <h1 class="card-title">Deadlock</h1>
             <p class="card-text">My first MOBA, very cool game</p>
