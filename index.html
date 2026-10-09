@@ -272,9 +272,14 @@
     <div class="row my-5">
       <div class="col-12 col-lg-6 mb-5 mb-lg-0">
         <div class="card mx-5">
-          <img src="images/B3_Slippi.png" class="card-img-top">
+          <div class="card-rank-placeholder slippi-rank-placeholder">
+            <img id="slippi-rank-image"
+              src="https://slippi.gg/static/media/rank_Silver_I.b8069dd847a639127f6d3ff5363623f7.svg"
+              alt="Silver 1 rank">
+          </div>
           <div class="card-body">
             <h1 class="card-title">Smash Melee</h1>
+            <p id="slippi-rating" class="card-vr">Loading rating...</p>
             <p class="card-text">RIP</p>
             <div class="card-img-bottom">
               <a href="https://slippi.gg/user/then-508"
@@ -331,7 +336,7 @@
     <div class="row my-5">
       <div class="col-12 col-lg-6 mb-5 mb-lg-0">
         <div class="card mx-5">
-          <img src="images/deadlock_phantom.webp" class="card-img-top">
+          <img src="https://assets-bucket.deadlock-api.com/assets-api-res/images/ranks/rank08_lg.webp" class="card-img-top">
           <div class="card-body">
             <h1 class="card-title">Deadlock</h1>
             <p class="card-text">My first MOBA, very cool game</p>
@@ -541,6 +546,94 @@
         .catch(err => {
           vrEl.textContent = 'VR unavailable';
           console.warn('Failed to fetch Retro Rewind VR:', err);
+        });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const rankImage = document.getElementById('slippi-rank-image');
+      const rankLabel = document.getElementById('slippi-rank-label');
+      const ratingEl = document.getElementById('slippi-rating');
+      if (!rankImage || !ratingEl) return;
+
+      const ranks = [
+        { min: 2350, name: 'Master 3', file: 'rank_Master_III.5075fd077bf77bfa6c59985252e0cb04.svg' },
+        { min: 2275, name: 'Master 2', file: 'rank_Master_II.c0b5472d49d391d2063d8e2a19c9ea17.svg' },
+        { min: 2191.75, name: 'Master 1', file: 'rank_Master_I.0ce2459fedf9e33ebee0cb3520a17e2f.svg' },
+        { min: 2136.28, name: 'Diamond 3', file: 'rank_Diamond_III.ae3a5720a6ed48594efef54249095001.svg' },
+        { min: 2073.67, name: 'Diamond 2', file: 'rank_Diamond_II.2f26cd8248bcf6c34ea1efe7f835b123.svg' },
+        { min: 2003.92, name: 'Diamond 1', file: 'rank_Diamond_I.bcc6237a1e6be861f22f330bbff96964.svg' },
+        { min: 1927.03, name: 'Platinum 3', file: 'rank_Platinum_III.cd9d7a413a1de2182caaae563b4e5023.svg' },
+        { min: 1843, name: 'Platinum 2', file: 'rank_Platinum_II.ec1c571c896ed47ef2b14d8e2dd79fef.svg' },
+        { min: 1751.83, name: 'Platinum 1', file: 'rank_Platinum_I.7a22c1a7c7640af6b6bf2f7b5b439fc6.svg' },
+        { min: 1653.52, name: 'Gold 3', file: 'rank_Gold_III.38643ad9dbef534920fc2361fd736d7a.svg' },
+        { min: 1548.07, name: 'Gold 2', file: 'rank_Gold_II.951fc625063425ed048c864988e8d7b7.svg' },
+        { min: 1435.48, name: 'Gold 1', file: 'rank_Gold_I.523b488f06ff22aaa013e94b6178f157.svg' },
+        { min: 1315.75, name: 'Silver 3', file: 'rank_Silver_III.93588af0e9a6bc9406209d5ef3cc9dc7.svg' },
+        { min: 1188.88, name: 'Silver 2', file: 'rank_Silver_II.7a97ee32770c36e78d9d7e9279c7ce38.svg' },
+        { min: 1054.87, name: 'Silver 1', file: 'rank_Silver_I.b8069dd847a639127f6d3ff5363623f7.svg' },
+        { min: 913.72, name: 'Bronze 3', file: 'rank_Bronze_III.b44c3a06f14234dec6f67e9b28088a6f.svg' },
+        { min: 765.43, name: 'Bronze 2', file: 'rank_Bronze_II.9d7a7994dbf087e3aea44f5b1c1409a7.svg' },
+        { min: -Infinity, name: 'Bronze 1', file: 'rank_Bronze_I.90480ec5a08ee8d6048021f889933455.svg' }
+      ];
+      const unrankedRanks = {
+        none: { name: 'Unranked', file: 'rank_Unranked1.ac2623299b250689293cd4a5e68fcc5b.svg' },
+        pending: { name: 'Pending', file: 'rank_Unranked3.0f639e8b73090a7ba4a50f7bcc272f57.svg' }
+      };
+
+      const query = `
+        query SlippiRankCardQuery($cc: String) {
+          getUser(connectCode: $cc) {
+            rankedNetplayProfile {
+              ratingOrdinal
+              ratingUpdateCount
+              dailyGlobalPlacement
+              dailyRegionalPlacement
+            }
+          }
+        }
+      `;
+
+      fetch('https://internal.slippi.gg/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          operationName: 'SlippiRankCardQuery',
+          variables: { cc: 'THEN#508' },
+          query
+        })
+      })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          const profile = data?.data?.getUser?.rankedNetplayProfile;
+          if (!profile || typeof profile.ratingOrdinal !== 'number' ||
+              typeof profile.ratingUpdateCount !== 'number') {
+            throw new Error('Slippi profile rating was not available');
+          }
+
+          const rank = profile.ratingUpdateCount === 0
+            ? unrankedRanks.none
+            : profile.ratingUpdateCount < 5
+              ? unrankedRanks.pending
+              : profile.ratingOrdinal >= 2191.75 &&
+                  (profile.dailyGlobalPlacement || profile.dailyRegionalPlacement)
+                ? { name: 'Grandmaster', file: 'rank_Grand_Master.0f3bc5674e8ec76f17514f197242c4fa.svg' }
+                : ranks.find(item => profile.ratingOrdinal >= item.min);
+
+          rankImage.src = `https://slippi.gg/static/media/${rank.file}`;
+          rankImage.alt = `${rank.name} rank`;
+          rankImage.hidden = false;
+          if (rankLabel) rankLabel.textContent = rank.name;
+          ratingEl.textContent = `Current Rating: ${profile.ratingOrdinal.toFixed(1)}`;
+        })
+        .catch(error => {
+          rankImage.hidden = true;
+          if (rankLabel) rankLabel.textContent = 'Rank unavailable';
+          ratingEl.textContent = 'Rating unavailable';
+          console.warn('Failed to fetch Slippi rating:', error);
         });
     });
   </script>

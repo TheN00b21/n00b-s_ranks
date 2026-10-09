@@ -80,6 +80,19 @@ body{
   align-items:center;
   justify-content:center;
 }
+.slippi-rank-placeholder{
+  flex-direction: column;
+  gap: 4px;
+}
+.slippi-rank-placeholder img{
+  height: 145px;
+  max-width: 100%;
+  object-fit: contain;
+}
+.slippi-rank-placeholder span{
+  font-size: 16px;
+  font-weight: bold;
+}
 .leaderboard-rank{
   text-align:center;
   background: linear-gradient(90deg,#001478,#a80000);
